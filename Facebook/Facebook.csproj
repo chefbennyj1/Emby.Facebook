@@ -13,13 +13,13 @@
 <ItemGroup>
   <None Remove="Configuration\FacebookPluginConfigurationPage.html" />
   <None Remove="Configuration\FacebookPluginConfigurationPage.js" />
-  <None Remove="thumg.png" />
+  <None Remove="thumb.png" />
 </ItemGroup>
 
 <ItemGroup>
   <EmbeddedResource Include="Configuration\FacebookPluginConfigurationPage.html" />
   <EmbeddedResource Include="Configuration\FacebookPluginConfigurationPage.js" />
-  <EmbeddedResource Include="thumg.png" />
+  <EmbeddedResource Include="thumb.png" />
 </ItemGroup>
 
 <ItemGroup> <PackageReference Include="mediabrowser.server.core" Version="4.2.0.40" /> <PackageReference Include="System.Memory" Version="4.5.3" /></ItemGroup>
