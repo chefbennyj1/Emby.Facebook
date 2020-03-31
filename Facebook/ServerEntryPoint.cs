@@ -95,7 +95,6 @@ namespace Facebook
 
         private void SessionManager_PlaybackStart(object sender, PlaybackProgressEventArgs e)
         {
-            
             // ReSharper disable once ComplexConditionExpression
             if (e.MediaInfo.RunTimeTicks != null && (e.Item.MediaType == MediaType.Video && e.MediaInfo.RunTimeTicks.Value < IntroOrVideoBackDrop)) return;
 
