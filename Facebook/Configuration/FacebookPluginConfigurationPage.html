@@ -1,0 +1,28 @@
+﻿<div data-role="page" class=" type-interior pluginConfigurationPage FacebookPluginConfigurationPage" data-require="emby-button,emby-input,emby-select,emby-checkbox" data-controller="__plugin/FacebookPluginConfigurationPageJS">
+    <div class="content-primary">
+        <div class="verticalSection verticalSection">
+            <div class="sectionTitleContainer sectionTitleContainer-cards align-items-center">
+                <h2 class="sectionTitle sectionTitle-cards">Facebook</h2>
+
+                <img src="" />
+                <form>
+                    <p>Login to developers.facebook.com from the link below. Copy and paste the access token you generate in the text input and save.</p>
+                    <p>Make sure that when you create the access token that you mark the needed permissions:</p>
+                    <p>1. publish_pages</p>
+                    <p>2. manage_pages</p>
+                    <div class="inputContainer fldFacebookApiKey">
+                        <div class="flex align-items-center">
+                            <div class="flex-grow">
+                                <label class="inputLabel inputLabelUnfocused" for="txtFacebookApiKey">Facebook Access Token:</label>
+                                <input type="text" id="txtFacebookApiKey" label="Facebook Access Token:" class="emby-input">
+                            </div>
+                        </div>
+                        <div class="fieldDescription">Api key from <a is="emby-linkbutton" class="button-link emby-button" href="https://developers.facebook.com/tools/explorer" target="_blank">developers.facebook.com</a>.</div>
+                    </div>
+
+                    <button is="emby-button" class="raised button-submit block emby-button" id="saveFacebookData">save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
