@@ -1,6 +1,12 @@
 # Emby.Facebook
 Post Emby server data to a facebook page
 
+
+![alt text](https://github.com/chefbennyj1/Emby.Facebook/blob/master/Facebook/thumb.png?raw=true)
+
+
+
+
 This plugin will post likes and watch information to a Facebook page.
 
 This plugin will post likes and watch information to a Facebook page.
