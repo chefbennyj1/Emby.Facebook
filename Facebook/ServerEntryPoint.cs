@@ -83,6 +83,7 @@ namespace Facebook
         {
             if (e.SaveReason != UserDataSaveReason.UpdateUserRating) return;
             if (!e.Item.IsFavoriteOrLiked(e.User)) return;
+
             var config = Plugin.Instance.Configuration;
 
             // ReSharper disable once TooManyChainedReferences
