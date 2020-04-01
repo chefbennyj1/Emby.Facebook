@@ -27,21 +27,21 @@ namespace Facebook
         private ILibraryManager LibraryManager        { get; }
 
         private const long IntroOrVideoBackDrop = 3000000000L;
+
         // ReSharper disable once TooManyDependencies
-        public ServerEntryPoint(IJsonSerializer json, ISessionManager ses, ILogManager log, IHttpClient client, IServerApplicationHost host, IUserDataManager userMan, ILibraryManager lib)
+        public ServerEntryPoint(IJsonSerializer json, ISessionManager ses, ILogManager log, IHttpClient client, 
+                                IServerApplicationHost host, IUserDataManager userMan, ILibraryManager lib)
         {
             JsonSerializer = json;
             SessionManager = ses;
-            LogManager = log;
-            Logger = LogManager.GetLogger(Plugin.Instance.Name);
-            HttpClient = client;
-            Host = host;
-            UserManager = userMan;
+            LogManager     = log;
+            Logger         = LogManager.GetLogger(Plugin.Instance.Name);
+            HttpClient     = client;
+            Host           = host;
+            UserManager    = userMan;
             LibraryManager = lib;
             
         }
-
-        
 
         public void Dispose()
         {
@@ -56,9 +56,9 @@ namespace Facebook
             WanAddress = Host.GetPublicSystemInfo(CancellationToken.None).Result.WanAddress;
             
             //Server Events 
-            UserManager.UserDataSaved += UserManager_UserDataSaved;
+            UserManager.UserDataSaved    += UserManager_UserDataSaved;
             SessionManager.PlaybackStart += SessionManager_PlaybackStart;
-            LibraryManager.ItemAdded += LibraryManager_ItemAdded;
+            LibraryManager.ItemAdded     += LibraryManager_ItemAdded;
 
         }
 
