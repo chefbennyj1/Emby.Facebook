@@ -2,6 +2,8 @@
 using System.Threading;
 using MediaBrowser.Common.Net;
 using MediaBrowser.Controller;
+using MediaBrowser.Controller.Data;
+using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Plugins;
 using MediaBrowser.Controller.Session;
@@ -36,6 +38,7 @@ namespace Facebook
             Host = host;
             UserManager = userMan;
             LibraryManager = lib;
+            
         }
 
         
@@ -62,14 +65,15 @@ namespace Facebook
         private void LibraryManager_ItemAdded(object sender, ItemChangeEventArgs e)
         {
             var config = Plugin.Instance.Configuration;
-
+            
             // ReSharper disable once TooManyChainedReferences
-            var item = e.Item.MediaType == "Episode" ? LibraryManager.GetItemById(e.Item.Parent.Parent.InternalId) : e.Item;
+            var item = e.Item.GetType().Name == "Episode" ? LibraryManager.GetItemById(e.Item.Parent.Parent.InternalId) : e.Item;
 
             var data = new Payload
             {
-                message = $"New {e.Item.MediaType}: {item.Name}!",
-                url = $"{WanAddress}/emby/Items/{item.InternalId}/Images/Primary?maxHeight=1108&amp;maxWidth=800&amp;quality=90"
+                message  = $"New {e.Item.GetType().Name} available: {item.Name}! Watch the trailer now!",
+                endpoint = "me/feed",
+                link     = e.Item.RemoteTrailers[0].Url
             };
 
             FacebookClient.PostToPage(data, Logger, HttpClient, config);
@@ -82,14 +86,15 @@ namespace Facebook
             var config = Plugin.Instance.Configuration;
 
             // ReSharper disable once TooManyChainedReferences
-            var item = e.Item.MediaType == "Episode" ? LibraryManager.GetItemById(e.Item.Parent.Parent.InternalId) : e.Item;
+            var item = e.Item.GetType().Name == "Episode" ? LibraryManager.GetItemById(e.Item.Parent.Parent.InternalId) : e.Item;
 
             var data = new Payload
             {
-                message = $"{e.User.Name} likes the {item.MediaType} {item.Name}",
-                url = $"{WanAddress}/emby/Items/{item.InternalId}/Images/Primary?maxHeight=1108&amp;maxWidth=800&amp;quality=90"
+                message = $"{e.User.Name} likes the {e.Item.GetType().Name} {item.Name}",
+                url = $"{WanAddress}/emby/Items/{item.InternalId}/Images/Primary?maxHeight=1108&amp;maxWidth=800&amp;quality=90",
+                endpoint = "me/photos"
             };
-
+            
             FacebookClient.PostToPage(data, Logger, HttpClient, config);
         }
 
@@ -108,7 +113,8 @@ namespace Facebook
             var data = new Payload
             {
                 message = message,
-                url = $"{WanAddress}/emby/Items/{item.InternalId}/Images/Primary?maxHeight=1108&amp;maxWidth=800&amp;quality=90"
+                url = $"{WanAddress}/emby/Items/{item.InternalId}/Images/Primary?maxHeight=1108&amp;maxWidth=800&amp;quality=90",
+                endpoint = "me/photos"
             };
             
             FacebookClient.PostToPage(data, Logger, HttpClient, config);
