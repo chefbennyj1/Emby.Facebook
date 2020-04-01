@@ -180,5 +180,3 @@ Note: The Facebook API Access Token can get a little messy. Just make sure that 
 The Facebook API will not allow any Posts from the API rto personal pages without a Registered App, which I have already requested permissions top get, but because of COVID 19 it might take a while to get it registered.
 
  
-
-If this is interesting to anyone, I'll continue development and try to make things easier. 
