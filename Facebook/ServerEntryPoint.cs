@@ -87,10 +87,12 @@ namespace Facebook
 
             // ReSharper disable once TooManyChainedReferences
             var item = e.Item.GetType().Name == "Episode" ? LibraryManager.GetItemById(e.Item.Parent.Parent.InternalId) : e.Item;
+            // ReSharper disable once ComplexConditionExpression
+            var message = $"{e.User.Name} is likes the { e.Item.GetType().Name}:  {e.Item.Name} " + e.Item.GetType().Name == "Episode" ? $" from the series {item.Name}" : "";
 
             var data = new Payload
             {
-                message = $"{e.User.Name} likes the {e.Item.GetType().Name} {item.Name}",
+                message = message,
                 url = $"{WanAddress}/emby/Items/{item.InternalId}/Images/Primary?maxHeight=1108&amp;maxWidth=800&amp;quality=90",
                 endpoint = "me/photos"
             };
@@ -106,7 +108,7 @@ namespace Facebook
             var config = Plugin.Instance.Configuration;
             
             // ReSharper disable TooManyChainedReferences
-            var item    = e.MediaInfo.Type == "Episode" ? LibraryManager.GetItemById(e.Item.Parent.ParentId) : e.Item;
+            var item    = e.Item.GetType().Name == "Episode" ? LibraryManager.GetItemById(e.Item.Parent.ParentId) : e.Item;
             // ReSharper disable once ComplexConditionExpression
             var message = $"{e.Session.UserName} is watching the {e.MediaInfo.Type}:  {e.Item.Name} " + e.MediaInfo.Type == "Episode" ? $" from the series {item.Name}" : "";
 
