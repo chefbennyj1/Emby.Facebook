@@ -2,8 +2,6 @@
 using System.Threading;
 using MediaBrowser.Common.Net;
 using MediaBrowser.Controller;
-using MediaBrowser.Controller.Data;
-using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Plugins;
 using MediaBrowser.Controller.Session;
@@ -65,13 +63,13 @@ namespace Facebook
         private void LibraryManager_ItemAdded(object sender, ItemChangeEventArgs e)
         {
             var config = Plugin.Instance.Configuration;
-            
-            // ReSharper disable once TooManyChainedReferences
-            var item = e.Item.GetType().Name == "Episode" ? LibraryManager.GetItemById(e.Item.Parent.Parent.InternalId) : e.Item;
+            var type   = e.Item.GetType();
+            // ReSharper disable TooManyChainedReferences
+            var item   = type.Name == "Episode" ? LibraryManager.GetItemById(e.Item.Parent.Parent.InternalId) : e.Item;
 
             var data = new Payload
             {
-                message  = $"New {e.Item.GetType().Name} available: {item.Name}! Watch the trailer now!",
+                message  = $"New {type.Name} available: {item.Name}! Watch the trailer now!",
                 endpoint = "me/feed",
                 link     = e.Item.RemoteTrailers[0].Url
             };
@@ -81,20 +79,23 @@ namespace Facebook
 
         private void UserManager_UserDataSaved(object sender, UserDataSaveEventArgs e)
         {
+            
             if (e.SaveReason != UserDataSaveReason.UpdateUserRating) return;
             if (!e.Item.IsFavoriteOrLiked(e.User)) return;
 
-            var config = Plugin.Instance.Configuration;
+            var config  = Plugin.Instance.Configuration;
+            if (!config.UserPostsOptIn.Contains(e.User.Id)) return;
 
-            // ReSharper disable once TooManyChainedReferences
-            var item = e.Item.GetType().Name == "Episode" ? LibraryManager.GetItemById(e.Item.Parent.Parent.InternalId) : e.Item;
-            // ReSharper disable once ComplexConditionExpression
-            var message = $"{e.User.Name} is likes the { e.Item.GetType().Name}:  {e.Item.Name} " + e.Item.GetType().Name == "Episode" ? $" from the series {item.Name}" : "";
+            var type    = e.Item.GetType();
+            var item    = type.Name == "Episode" ? LibraryManager.GetItemById(e.Item.Parent.Parent.InternalId) : e.Item;
+            var message = $"{e.User.Name} likes the {type.Name}: {e.Item.Name} ";
+
+            message += type.Name == "Episode" ? $" from the series {item.Name}" : "";
 
             var data = new Payload
             {
-                message = message,
-                url = $"{WanAddress}/emby/Items/{item.InternalId}/Images/Primary?maxHeight=1108&amp;maxWidth=800&amp;quality=90",
+                message  = message,
+                url      = $"{WanAddress}/emby/Items/{item.InternalId}/Images/Primary?maxHeight=1108&amp;maxWidth=800&amp;quality=90",
                 endpoint = "me/photos"
             };
             
@@ -106,17 +107,20 @@ namespace Facebook
             // ReSharper disable once ComplexConditionExpression
             if (e.MediaInfo.RunTimeTicks != null && (e.Item.MediaType == MediaType.Video && e.MediaInfo.RunTimeTicks.Value < IntroOrVideoBackDrop)) return;
 
-            var config = Plugin.Instance.Configuration;
-            
-            // ReSharper disable TooManyChainedReferences
-            var item    = e.Item.GetType().Name == "Episode" ? LibraryManager.GetItemById(e.Item.Parent.ParentId) : e.Item;
-            // ReSharper disable once ComplexConditionExpression
-            var message = $"{e.Session.UserName} is watching the {e.MediaInfo.Type}:  {e.Item.Name} " + e.MediaInfo.Type == "Episode" ? $" from the series {item.Name}" : "";
+            var config  = Plugin.Instance.Configuration;
+
+            if (!config.UserPostsOptIn.Exists(id => id.ToString() == e.Session.UserId)) return;
+
+            var type    = e.Item.GetType();
+            var item    = type.Name == "Episode" ? LibraryManager.GetItemById(e.Item.Parent.ParentId) : e.Item;
+            var message = $"{e.Session.UserName} is watching the {e.MediaInfo.Type}:  {e.Item.Name} ";
+
+            message += e.MediaInfo.Type == "Episode" ? $" from the series {item.Name}" : "";
 
             var data = new Payload
             {
-                message = message,
-                url = $"{WanAddress}/emby/Items/{item.InternalId}/Images/Primary?maxHeight=1108&amp;maxWidth=800&amp;quality=90",
+                message  = message,
+                url      = $"{WanAddress}/emby/Items/{item.InternalId}/Images/Primary?maxHeight=1108&amp;maxWidth=800&amp;quality=90",
                 endpoint = "me/photos"
             };
             

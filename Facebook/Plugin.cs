@@ -15,8 +15,7 @@ namespace Facebook
         public static Plugin Instance { get; private set; }
         public ImageFormat ThumbImageFormat => ImageFormat.Png;
         
-        public override Guid Id => new Guid("55A5756C-F9EA-4E96-ABF4-6360607FBDCD");
-
+        public override Guid Id     => new Guid("55A5756C-F9EA-4E96-ABF4-6360607FBDCD");
         public override string Name => "Facebook";
 
         public Stream GetThumbImage()
@@ -40,7 +39,7 @@ namespace Facebook
             },
             new PluginPageInfo
             {
-                Name = "FacebookPluginConfigurationPageJS",
+                Name                 = "FacebookPluginConfigurationPageJS",
                 EmbeddedResourcePath = GetType().Namespace + ".Configuration.FacebookPluginConfigurationPage.js"
             }
         };

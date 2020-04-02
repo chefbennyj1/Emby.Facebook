@@ -4,12 +4,13 @@
             <div class="sectionTitleContainer sectionTitleContainer-cards align-items-center">
                 <h2 class="sectionTitle sectionTitle-cards">Facebook</h2>
 
-                <img src="" />
                 <form>
-                    <p>Login to developers.facebook.com from the link below. Copy and paste the access token you generate in the text input and save.</p>
+                    <p>Login to <a is="emby-linkbutton" class="button-link emby-button" href="https://developers.facebook.com/tools/explorer" target="_blank">developers.facebook.com</a>.</p>
+                    <p>Copy and paste the access token you generate in the text input and save.</p>
                     <p>Make sure that when you create the access token that you mark the needed permissions:</p>
                     <p>1. publish_pages</p>
                     <p>2. manage_pages</p>
+                    <p> and also make sure the token never expires.</p>
                     <div class="inputContainer fldFacebookApiKey">
                         <div class="flex align-items-center">
                             <div class="flex-grow">
@@ -18,6 +19,38 @@
                             </div>
                         </div>
                         <div class="fieldDescription">Api key from <a is="emby-linkbutton" class="button-link emby-button" href="https://developers.facebook.com/tools/explorer" target="_blank">developers.facebook.com</a>.</div>
+                    </div>
+                    
+                    <div class="inputContainer" style="text-align: left;">
+                        <label style="width: auto;" class="mdl-switch mdl-js-switch">
+                            <input is="emby-toggle" type="checkbox" id="enableRecommendationUpdate" class="chkAdvanced noautofocus mdl-switch__input" data-embytoggle="true">
+                            <span class="toggleButtonLabel mdl-switch__label">Enable weekly recommendation post</span>
+                            <div class="mdl-switch__trackContainer">
+                                <div class="mdl-switch__track"></div>
+                                <div class="mdl-switch__thumb">
+                                    <span class="mdl-switch__focus-helper"></span>
+                                </div>
+                            </div>
+                        </label>
+                        <div class="fieldDescription">Once a week, like and favorite data will be calculated for a recommendation post.</div>
+                    </div>
+                    
+                    <div class="inputContainer" style="text-align: left;">
+                        <label style="width: auto;" class="mdl-switch mdl-js-switch">
+                            <input is="emby-toggle" type="checkbox" id="enableUserWatchUpdate" class="chkAdvanced noautofocus mdl-switch__input" data-embytoggle="true">
+                            <span class="toggleButtonLabel mdl-switch__label">Enable per user status posts</span>
+                            <div class="mdl-switch__trackContainer">
+                                <div class="mdl-switch__track"></div>
+                                <div class="mdl-switch__thumb">
+                                    <span class="mdl-switch__focus-helper"></span>
+                                </div>
+                            </div>
+                        </label>
+                        <div class="fieldDescription">Status posts made on behalf of the user.</div>
+                    </div>
+                    
+                    <div id="userList" style="padding:2em" class="paperList hide">
+                        <h2 class="sectionTitle sectionTitle-cards">Posting users</h2>
                     </div>
 
                     <button is="emby-button" class="raised button-submit block emby-button" id="saveFacebookData">save</button>
