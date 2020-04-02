@@ -71,7 +71,9 @@ namespace Facebook
             {
                 message  = $"New {type.Name} available: {item.Name}! Watch the trailer now!",
                 endpoint = "me/feed",
-                link     = e.Item.RemoteTrailers[0].Url
+                link     = e.Item.RemoteTrailers.Length == 0  ? 
+                    $"{WanAddress}/emby/Items/{item.InternalId}/Images/Primary?maxHeight=1108&amp;maxWidth=800&amp;quality=90" : 
+                    e.Item.RemoteTrailers[0].Url
             };
 
             FacebookClient.PostToPage(data, Logger, HttpClient, config);

@@ -33,30 +33,32 @@ namespace Facebook
         {
             var ids = LibraryManager.GetInternalItemIds(new InternalItemsQuery()
             {
-                IncludeItemTypes = new[] {"Movies", "Episodes"},
-                Recursive = true,
-                MinDateCreated = TaskManager.ScheduledTasks.FirstOrDefault(task => task.Name == Name)
-                    ?.LastExecutionResult.EndTimeUtc
+                IncludeItemTypes = new[] {"Movie", "Episode"},
+                MinDateCreated = DateTime.Now.AddDays(-7),
+                Limit = 4
             });
 
             if (ids.Any())
             {
-                var message = $"Here's what is new!\n";
+                var message = "Here's what is new!\n";
                 foreach (var id in ids)
                 {
                     var item = LibraryManager.GetItemById(id);
-
-                    message += $"{item.Name}\n";
-
-                    var data = new Payload()
+                    if (item.GetType().Name == "Episode")
                     {
-                        message = message
-                    };
-
-                    FacebookClient.PostToPage(data, Logger, HttpClient, Plugin.Instance.Configuration);
-
-
+                        message += $"The Episode {item.Name} from the series {item.Parent.Parent.Name}\n";
+                        continue;
+                    }
+                    message += $"The Movie : {item.Name}\n";
                 }
+
+                var data = new Payload()
+                {
+                    message = message,
+                    endpoint = "me/feed"
+                };
+
+                FacebookClient.PostToPage(data, Logger, HttpClient, Plugin.Instance.Configuration);
             }
             progress.Report(100.0);
         }
