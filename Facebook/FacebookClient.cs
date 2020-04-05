@@ -15,18 +15,18 @@ namespace Facebook
     public class FacebookClient
     {
         // ReSharper disable once TooManyArguments
-        public static void PostToPage(Payload data, ILogger logger, IHttpClient httpClient, PluginConfiguration config)
+        public static async void PostToPage(Payload data, ILogger logger, IHttpClient httpClient, PluginConfiguration config)
         {
             logger.Info("Begin Facebook Post");
 
             var link = data.link != null ? $"&link={data.link}" : "";
             var url  = data.url  != null ? $"&url={data.url}"   : "";
             
-            httpClient.Post(new HttpRequestOptions()
+            await httpClient.Post(new HttpRequestOptions()
             {
                 Url = $"https://graph.facebook.com/v2.3/{data.endpoint}?access_token={config.accessToken}{url}&message={data.message}" + link
             });
-
+            
             logger.Info("Facebook Post complete");
         }
 

@@ -2,6 +2,7 @@
 using System.Threading;
 using MediaBrowser.Common.Net;
 using MediaBrowser.Controller;
+using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Plugins;
 using MediaBrowser.Controller.Session;
@@ -13,7 +14,11 @@ namespace Facebook
 {
     public class ServerEntryPoint : IServerEntryPoint
     {
-        // ReSharper disable once UnusedAutoPropertyAccessor.Local
+        // ReSharper disable ComplexConditionExpression
+        // ReSharper disable UnusedAutoPropertyAccessor.Local
+        // ReSharper disable TooManyDependencies
+        // ReSharper disable MethodNameNotMeaningful
+
         private static IJsonSerializer JsonSerializer { get; set; }
         private ISessionManager SessionManager        { get; }
         private ILogger Logger                        { get; }
@@ -25,8 +30,7 @@ namespace Facebook
         private ILibraryManager LibraryManager        { get; }
 
         private const long IntroOrVideoBackDrop = 3000000000L;
-
-        // ReSharper disable once TooManyDependencies
+        
         public ServerEntryPoint(IJsonSerializer json, ISessionManager ses, ILogManager log, IHttpClient client, 
                                 IServerApplicationHost host, IUserDataManager userMan, ILibraryManager lib)
         {
@@ -45,8 +49,7 @@ namespace Facebook
         {
             throw new NotImplementedException();
         }
-
-        // ReSharper disable once MethodNameNotMeaningful
+        
         public void Run()
         {
             Plugin.Instance.UpdateConfiguration(Plugin.Instance.Configuration);
@@ -60,21 +63,39 @@ namespace Facebook
 
         }
 
+        private static string LastItemAdded = string.Empty;
+       
+        private readonly Func<BaseItem, bool> ShouldPost = item =>
+        {
+            switch (item.GetType().Name)
+            {
+                case "Episode":
+                    var nameItemAdded = LastItemAdded;
+                    LastItemAdded = item.Parent.Parent.Name;
+                    return item.Parent.Parent.Name != nameItemAdded;
+                case "Movie":
+                    return true;
+                default:
+                    return false;
+            }
+        };
+        
         private void LibraryManager_ItemAdded(object sender, ItemChangeEventArgs e)
         {
             var config = Plugin.Instance.Configuration;
             var type   = e.Item.GetType();
-            // ReSharper disable TooManyChainedReferences
-            var item   = type.Name == "Episode" ? LibraryManager.GetItemById(e.Item.Parent.Parent.InternalId) : e.Item;
-
+            if (!ShouldPost(e.Item)) return;
+           
+            var message = $"New {type.Name} available: {e.Item.Name} "; 
+                          
             var data = new Payload
             {
-                message  = $"New {type.Name} available: {item.Name}! Watch the trailer now!",
+                message  = message,
                 endpoint = "me/feed",
-                link     = e.Item.RemoteTrailers.Length == 0  ? "" : e.Item.RemoteTrailers[0].Url
+                link     = e.Item.RemoteTrailers.Length == 0  ? null : e.Item.RemoteTrailers[0].Url
             };
-
-            FacebookClient.PostToPage(data, Logger, HttpClient, config);
+            
+            //FacebookClient.PostToPage(data, Logger, HttpClient, config);
         }
 
         private void UserManager_UserDataSaved(object sender, UserDataSaveEventArgs e)
@@ -109,7 +130,7 @@ namespace Facebook
 
             var config  = Plugin.Instance.Configuration;
 
-            if (!config.UserPostsOptIn.Exists(id => id.ToString() == e.Session.UserId)) return;
+            if (!config.UserPostsOptIn.Exists(id => id.ToString().Replace("-",string.Empty) == e.Session.UserId)) return; //Somethings wrong here!!
 
             var type    = e.Item.GetType();
             var item    = type.Name == "Episode" ? LibraryManager.GetItemById(e.Item.Parent.ParentId) : e.Item;

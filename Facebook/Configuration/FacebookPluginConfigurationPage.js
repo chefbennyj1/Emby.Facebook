@@ -26,36 +26,59 @@
 
                     var userList = view.querySelector('#userList');
 
-                    ApiClient.getUsers().then(users => {
-                        users.forEach(user => {
-                            userList.innerHTML += getUsersToggleHtml(user);
-                        });
+                    ApiClient.getPluginConfiguration(pluginId).then((config) => {
 
-                        var userToggles = userList.querySelectorAll('.enableUserWatchUpdate');
-                        userToggles.forEach(toggle => {
-                            toggle.addEventListener('change',
-                                (e) => {
-                                    if (e.target.checked) {
-                                        ApiClient.getPluginConfiguration(pluginId).then((config) => {
-                                            config.UserPostsOptIn.push(e.target.id);
-                                            ApiClient.updatePluginConfiguration(pluginId, config).then((result) => {
-                                                Dashboard.processPluginConfigurationUpdateResult(result);
+                        ApiClient.getUsers().then(users => {
+                            users.forEach(user => {
+                                userList.innerHTML += getUsersToggleHtml(user);
+                            });
+
+                            var userToggles = userList.querySelectorAll('.enableUserWatchUpdate');
+                            userToggles.forEach(toggle => {
+
+                                if (config.UserPostsOptIn.includes(toggle.id)) toggle.checked = true;
+
+                                toggle.addEventListener('change',
+                                    (e) => {
+                                        if (e.target.checked) {
+                                            ApiClient.getPluginConfiguration(pluginId).then((config) => {
+                                                config.UserPostsOptIn.push(e.target.id);
+                                                ApiClient.updatePluginConfiguration(pluginId, config).then(
+                                                    (result) => {
+                                                        Dashboard.processPluginConfigurationUpdateResult(result);
+                                                    });
                                             });
-                                        });
-                                    } else {
-                                        ApiClient.getPluginConfiguration(pluginId).then((config) => {
-                                            config.UserPostsOptIn = config.UserPostsOptIn.filter((id) => id !== e.target.id);
-                                            ApiClient.updatePluginConfiguration(pluginId, config).then((result) => {
-                                                Dashboard.processPluginConfigurationUpdateResult(result);
+                                        } else {
+                                            ApiClient.getPluginConfiguration(pluginId).then((config) => {
+                                                config.UserPostsOptIn =
+                                                    config.UserPostsOptIn.filter((id) => id !== e.target.id);
+                                                ApiClient.updatePluginConfiguration(pluginId, config).then(
+                                                    (result) => {
+                                                        Dashboard.processPluginConfigurationUpdateResult(result);
+                                                    });
                                             });
+                                        }
+                                    });
+                            });
+                            /*
+                            ApiClient.getPluginConfiguration(pluginId).then((config) => {
+                                if (config.UserPostsOptIn) {
+                                    config.UserPostsOptIn.forEach((id) => {
+                                        var userToggles = userList.querySelectorAll('.enableUserWatchUpdate');
+                                        userToggles.forEach(toggle => {
+                                            if (toggle.id === id) {
+                                                toggle.checked = true;
+                                            }
                                         });
-                                    }
-                                });
+
+                                    });
+                                }
+                            });
+                            */
                         });
-                        
                     });
 
-                    ApiClient.getPluginConfiguration(pluginId).then((config) => {
+                        ApiClient.getPluginConfiguration(pluginId).then((config) => {
                         if (config.accessToken) {
                             view.querySelector('#txtFacebookApiKey').value = config.accessToken;
                         }
@@ -75,17 +98,7 @@
                                 }
                             }
                         } 
-                        if (config.UserPostsOptIn) {
-                            config.UserPostsOptIn.forEach((id) => {
-                                var userToggles = userList.querySelectorAll('.enableUserWatchUpdate');
-                                userToggles.forEach(toggle => {
-                                    if (toggle.id === id) {
-                                        toggle.checked = true;
-                                    }
-                                });
-                               
-                            });
-                        }
+                        
 
                     });
 
